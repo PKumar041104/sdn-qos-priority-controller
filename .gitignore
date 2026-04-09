@@ -1,4 +1,4 @@
-ryu39-venu/
+ryu39-venv/
 osken-venv/
-_pycache_/
+__pycache__/
 *.pyc
