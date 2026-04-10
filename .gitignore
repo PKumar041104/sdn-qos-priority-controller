@@ -1,4 +1,6 @@
-ryu39-venv/
 osken-venv/
+ryn39-venv/
+ryu-venv/
 __pycache__/
 *.pyc
+.python-version
