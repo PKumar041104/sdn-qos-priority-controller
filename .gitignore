@@ -1,6 +1,23 @@
-osken-venv/
-ryn39-venv/
-ryu-venv/
+# Python cache
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+.venv/
+ryu-venv/
+ryu39-venv/
+osken-venv/
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+
+# Temporary logs and captures
+*.log
+*.tmp
+
+# Python version file
 .python-version
