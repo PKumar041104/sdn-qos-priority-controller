@@ -147,3 +147,9 @@ POX was used as the SDN controller for this project. The controller code was pla
 ---
 
 ## 8. Project Title Explanation
+
+The title of the project is:
+
+Implementation and Analysis of QoS Simple Priority Controller in Software Defined Networking using Mininet and POX Controller
+
+Each part of the title is meaningful:
