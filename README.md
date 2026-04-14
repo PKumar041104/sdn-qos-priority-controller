@@ -105,3 +105,45 @@ Before starting Mininet and POX setup, the Ubuntu virtual machine was updated so
 sudo apt update
 sudo apt upgrade -y
 ```
+
+This step is important because dependency issues often arise in older or partially updated installations. The Mininet installation guide also begins with system update commands for this reason.
+
+---
+
+### 7.2 Installing Mininet
+
+Mininet was installed using Ubuntu’s package manager:
+
+```bash
+sudo apt install mininet -y
+```
+
+This installs Mininet, Open vSwitch, and the required dependencies needed for virtual hosts, switches, and links. The installation manual provided for the course also recommends direct installation through the package manager as the simpler and recommended method.
+
+---
+
+### 7.3 Verifying Mininet Installation
+
+Mininet can be verified using:
+
+```bash
+sudo mn
+```
+
+Inside the Mininet CLI:
+
+```bash
+pingall
+```
+
+A correct installation should show successful host-to-host communication with no packet loss. The course installation document lists this as the standard verification method.
+
+---
+
+### 7.4 Obtaining POX Controller
+
+POX was used as the SDN controller for this project. The controller code was placed in the ext directory of the POX repository so that it could be loaded as a custom POX module.
+
+---
+
+## 8. Project Title Explanation
