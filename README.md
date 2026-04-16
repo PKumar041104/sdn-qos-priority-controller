@@ -234,7 +234,23 @@ This file implements the POX controller logic. The controller listens for Packet
 
 ## 13. Step-by-Step Execution Procedure
 
-### Step 1: Cleanup of Mininet Environment
+### Step 1.a: Go to project folder
+
+```bash
+cd ~/sdn-qos-project
+```
+
+To enter the project directory where the topology, controller, screenshots, and reports are stored.
+
+### Step 1.b: Kill old POX/controller processes
+
+```bash
+sudo pkill -f pox
+```
+
+To make sure port 6633 is free and no old controller instance interferes.
+
+### Step 1.c: Cleanup of Mininet Environment
 
 Before launching a fresh simulation, the Mininet environment was cleaned to remove stale switch instances, links, and background processes.
 
@@ -263,6 +279,7 @@ This command performs several important tasks:
 - listens on port 6633,
 - uses forwarding.l2_learning for forwarding support,
 - loads the custom qos_controller module.
+- You should see: QoS priority controller module loaded and Listening on 0.0.0.0:6633
 
 **Controller behavior screenshots:**
 - screenshots/terminal/09_pox_controller1.png
@@ -314,7 +331,15 @@ A successful execution produced:
 
 This confirms that the topology, controller, and forwarding logic are functioning correctly before scenario-based testing begins.
 
-### Step 5: HTTP Communication Test
+### Step 5.a: Run High Priority traffic
+
+```bash
+h1 ping -c 5 h4
+```
+
+This generates ICMP traffic from h1 to h4. ICMP is treated as high priority because it is latency-sensitive.
+
+### Step 5.b: Run Medium Priority traffic (HTTP Communication Test)
 
 To generate application-layer traffic, a simple Python HTTP server was started on h2 and accessed from h4.
 
@@ -322,7 +347,7 @@ To generate application-layer traffic, a simple Python HTTP server was started o
 h2 python3 -m http.server 8080 &
 h4 curl http://10.0.0.2:8080
 ```
-This step verifies that HTTP traffic is flowing correctly through the network.
+This step verifies that HTTP traffic is flowing correctly through the network.So this starts an HTTP server on h2 and accesses it from h4. HTTP on port 8080 is my medium-priority traffic.
 
 **Screenshot:** screenshots/terminal/04_http_test.png
 
@@ -330,7 +355,7 @@ This step verifies that HTTP traffic is flowing correctly through the network.
 
 The output showing the HTML directory listing confirms that the request and response completed successfully.
 
-### Step 6: Throughput Test Using iPerf
+### Step 5.c: Run Low Priority traffic (Throughput Test Using iPerf)
 
 Bulk TCP traffic was generated using iPerf between h1 and h3.
 
@@ -339,7 +364,7 @@ h3 iperf -s -p 5001 &
 h1 iperf -c 10.0.0.3 -p 5001 -t 5
 ```
 
-This step allows throughput observation and creates a low-priority traffic flow for analysis.
+This step allows throughput observation and creates a low-priority traffic flow for analysis. So this generates bulk TCP traffic using iPerf. Since it is throughput-oriented and not delay-sensitive, I treated it as low priority.
 
 **Screenshot:** screenshots/terminal/05_iperf_test.png
 
@@ -347,7 +372,7 @@ This step allows throughput observation and creates a low-priority traffic flow 
 
 The output includes transfer size and bitrate, which are useful for throughput analysis. The implementation report records this as the bandwidth analysis step
 
-### Step 7: Concurrent Traffic Scenario – Ping + iPerf
+### Step 6: Concurrent Traffic Scenario – Ping + iPerf
 
 To observe the interaction between delay-sensitive and bulk traffic, ICMP and iPerf traffic were generated together.
 
@@ -363,7 +388,7 @@ h1 iperf3 -c 10.0.0.3 -p 5001 -t 10
 
 This scenario demonstrates that multiple traffic types can coexist and affect each other’s observed performance.
 
-### Step 8: Concurrent Traffic Scenario – HTTP + iPerf
+### Step 7: Concurrent Traffic Scenario – HTTP + iPerf
 
 To compare application-layer communication with bulk transfer, HTTP and iPerf traffic were executed together.
 
@@ -379,6 +404,15 @@ h1 iperf3 -c 10.0.0.3 -p 5001 -t 10
 ![07_http_iperf](screenshots/terminal/07_http_iperf.png)
 
 This scenario shows competition between medium-priority web traffic and low-priority bulk traffic.
+
+### Step 8: Clean old background servers before mixed demo
+
+```bash
+h2 pkill -f "http.server"
+h3 pkill -f "iperf3 -s"
+h3 pkill -f "iperf -s"
+```
+To avoid ‘address already in use’ errors before starting the next scenario.
 
 ### Step 9: Final Mixed Scenario – Ping + HTTP + iPerf
 
@@ -396,6 +430,11 @@ h1 iperf3 -c 10.0.0.3 -p 5001 -t 10
 
 ![08_all_traffic](screenshots/terminal/08_all_traffic.png)
 
+**Expected :**
+- Ping output
+- HTTP output
+- iPerf throughput output
+- Multiple priority logs in POX
 This is one of the most important screenshots in the project because it demonstrates simultaneous traffic coexistence under the bottleneck topology.
 
 ---
