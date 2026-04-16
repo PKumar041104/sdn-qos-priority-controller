@@ -243,6 +243,9 @@ sudo mn -c
 ```
 
 **Screenshot: screenshots/terminal/01_cleanup.png**
+
+![01_cleanup](screenshots/terminal/01_cleanup.png)
+
 This step ensures that the experiment starts from a clean state and avoids interference from old virtual interfaces or switch configurations. The implementation report documents this as the first execution step.
 
 ### Step 2: Starting the POX Controller
@@ -287,6 +290,8 @@ This command:
 
 **Screenshot:** screenshots/terminal/02_topology_run.png
 
+![02_topology_run](screenshots/terminal/02_topology_run.png)
+
 This screenshot shows hosts, switches, links, and the CLI startup.
 
 ### Step 4: Connectivity Testing
@@ -305,6 +310,8 @@ A successful execution produced:
 
 **Screenshot:** screenshots/terminal/03_pingall.png
 
+![03_pingall](screenshots/terminal/03_pingall.png)
+
 This confirms that the topology, controller, and forwarding logic are functioning correctly before scenario-based testing begins.
 
 ### Step 5: HTTP Communication Test
@@ -318,6 +325,8 @@ h4 curl http://10.0.0.2:8080
 This step verifies that HTTP traffic is flowing correctly through the network.
 
 **Screenshot:** screenshots/terminal/04_http_test.png
+
+![04_http_test](screenshots/terminal/04_http_test.png)
 
 The output showing the HTML directory listing confirms that the request and response completed successfully.
 
@@ -334,6 +343,8 @@ This step allows throughput observation and creates a low-priority traffic flow 
 
 **Screenshot:** screenshots/terminal/05_iperf_test.png
 
+![05_iperf_test](screenshots/terminal/05_iperf_test.png)
+
 The output includes transfer size and bitrate, which are useful for throughput analysis. The implementation report records this as the bandwidth analysis step
 
 ### Step 7: Concurrent Traffic Scenario – Ping + iPerf
@@ -347,6 +358,8 @@ h1 iperf3 -c 10.0.0.3 -p 5001 -t 10
 ```
 
 **Screenshot:** screenshots/terminal/06_ping_iperf.png
+
+![06_ping_iperf](screenshots/terminal/06_ping_iperf.png)
 
 This scenario demonstrates that multiple traffic types can coexist and affect each other’s observed performance.
 
@@ -363,6 +376,8 @@ h1 iperf3 -c 10.0.0.3 -p 5001 -t 10
 
 **Screenshot:** screenshots/terminal/07_http_iperf.png
 
+![07_http_iperf](screenshots/terminal/07_http_iperf.png)
+
 This scenario shows competition between medium-priority web traffic and low-priority bulk traffic.
 
 ### Step 9: Final Mixed Scenario – Ping + HTTP + iPerf
@@ -378,6 +393,8 @@ h1 iperf3 -c 10.0.0.3 -p 5001 -t 10
 ```
 
 **Screenshot:** screenshots/terminal/08_all_traffic.png
+
+![08_all_traffic](screenshots/terminal/08_all_traffic.png)
 
 This is one of the most important screenshots in the project because it demonstrates simultaneous traffic coexistence under the bottleneck topology.
 
@@ -397,25 +414,33 @@ This filter isolated the three traffic classes relevant to the QoS study.
 
 ### 14.1 ICMP Capture
 
-Image: screenshots/wireshark/wireshark_icmp.png
+**Image:** screenshots/wireshark/wireshark_icmp.png
+
+![wireshark_icmp](screenshots/wireshark/wireshark_icmp.png)
 
 This capture shows ICMP Echo Request and Echo Reply packets between h1 and h4, confirming the high-priority traffic flow.
 
 ### 14.2 HTTP Capture
 
-Image: screenshots/wireshark/wireshark_http_8080.png
+**Image:** screenshots/wireshark/wireshark_http_8080.png
+
+![wireshark_http_8080](screenshots/wireshark/wireshark_http_8080.png)
 
 This capture shows TCP handshake packets, an HTTP GET request, and an HTTP 200 OK response, confirming the medium-priority HTTP flow.
 
 ### 14.3 Bulk TCP Capture
 
-Image: screenshots/wireshark/wireshark_iperf_5001.png
+**Image:** screenshots/wireshark/wireshark_iperf_5001.png
+
+![wireshark_iperf_5001](screenshots/wireshark/wireshark_iperf_5001.png)
 
 This capture shows repeated TCP packets with data-carrying flags, confirming the low-priority bulk transfer generated using iPerf.
 
 ### 14.4 Mixed Traffic Capture
 
-Image: screenshots/wireshark/wireshark_all_traffic.png
+**Image:** screenshots/wireshark/wireshark_all_traffic.png
+
+![wireshark_all_traffic](screenshots/wireshark/wireshark_all_traffic.png)
 
 This capture is especially important because it shows ICMP, HTTP, and TCP port 5001 traffic in a single observation window. It proves that all three traffic classes coexist simultaneously in the network and traverse the bottleneck together.
 
@@ -429,11 +454,15 @@ The POX controller logs provide evidence of classification decisions.
 
 **Image:** screenshots/terminal/09_pox_controller1.png
 
+![09_pox_controller1](screenshots/terminal/09_pox_controller1.png)
+
 This screenshot shows that the QoS module was loaded successfully and that POX was running and listening for switch connections.
 
 **High-Priority Flow**
 
 **Image:** screenshots/terminal/09_pox_controller2.png
+
+![09_pox_controller2](screenshots/terminal/09_pox_controller2.png)
 
 This screenshot shows controller logs for ICMP traffic, classified as high priority.
 
@@ -441,11 +470,15 @@ This screenshot shows controller logs for ICMP traffic, classified as high prior
 
 **Image:** screenshots/terminal/09_pox_controller3.png
 
+![09_pox_controller3](screenshots/terminal/09_pox_controller3.png)
+
 This screenshot shows controller logs for HTTP traffic on port 8080, classified as medium priority.
 
 **Low-Priority Flow**
 
 **Image:** screenshots/terminal/09_pox_controller4.png
+
+![09_pox_controller4](screenshots/terminal/09_pox_controller4.png)
 
 This screenshot shows controller logs for TCP bulk traffic on port 5001, classified as low priority.
 
