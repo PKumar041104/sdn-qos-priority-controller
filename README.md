@@ -177,6 +177,57 @@ This project addresses those requirements as follows:
 - **Reports** were prepared in PDF format
 - **Final project** was pushed to GitHub with screenshots and reports
 
+**🎯 How latency is measured in your project**
+1. Using ping (ICMP)
+Command you used:
+
+```bash
+h1 ping h4
+```
+
+What it shows:
+```bash
+64 bytes from 10.0.0.4: icmp_seq=1 ttl=64 time=0.090 ms
+```
+The time = X ms is the latency (RTT)
+
+**What exactly is this latency?**
+It is Round Trip Time (RTT)
+Meaning: Time taken for packet to go from h1 → h4 → back to h1
+
+**📊 Where to look**
+At the end of ping: rtt min/avg/max/mdev = 0.082/5.289/25.248/9.984 ms
+Explain like this:
+- min → best latency
+- avg → overall latency
+- max → worst latency (important)
+
+**🎯 How we show "latency impact"**
+**Case 1: Only ping (baseline)**
+
+```bash
+h1 ping -c 5 h4
+```
+We will see low latency
+
+**Case 2: Ping + iPerf (congestion)**
+
+```bash
+h3 iperf -s -p 5001 &
+h1 ping -c 10 h4 &
+h1 iperf -c 10.0.0.3 -p 5001 -t 10
+```
+Now observe:
+- ping time increases ⬆️
+- delay fluctuates ⬆️
+- max latency becomes high ⬆️
+
+**💡 What is happening internally**
+Because: iPerf is sending heavy TCP traffic, bottleneck switch s2 gets congested, packets wait in queue, ping gets delayed
+
+**🧠 Simple explanation:**
+**“Latency is measured using ICMP ping. The round-trip time (RTT) shown in milliseconds represents the delay. When only ping is running, latency is low. When bulk traffic like iPerf is added, congestion occurs at the bottleneck switch, causing an increase in latency. This demonstrates the impact of traffic load on delay.”**
+
   ---
 
 ## 10. Network Topology Design
